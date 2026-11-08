@@ -3,7 +3,10 @@ import assert from "node:assert/strict";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import {
+import * as rootExports from "../src/index.js";
+import * as v1Exports from "../src/v1/index.js";
+
+const {
     parseIni,
     extractPortFromUnit,
     generateServiceUnit,
@@ -11,10 +14,19 @@ import {
     checkServices,
     findServiceByDomain,
     parseServiceFile
-} from "../src/index.js";
+} = rootExports;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDir = path.join(__dirname, "fixtures");
+
+test("v1 matches root exports parity", () => {
+    assert.equal(typeof v1Exports.listServices, "function");
+    assert.equal(typeof v1Exports.checkServices, "function");
+    assert.equal(typeof v1Exports.findServiceByDomain, "function");
+    assert.equal(typeof v1Exports.generateServiceUnit, "function");
+    assert.equal(v1Exports.listServices, rootExports.listServices);
+    assert.equal(v1Exports.checkServices, rootExports.checkServices);
+});
 
 test("parseIni correctly parses unit sections and multiple environments", () => {
     const raw = `
@@ -137,9 +149,7 @@ test("checkServices correctly identifies present and missing subdomains", () => 
         "random.example.com"
     ]);
 
-    // Check detailed metadata in present items
     const appt = result.present.find(p => p.domain === "appointment.keshavsoft.com");
     assert.equal(appt.port, "3000");
     assert.equal(appt.workingDirectory, "/root/KeshavSoft/appointment-notifier");
 });
-

@@ -128,4 +128,3 @@ export function generateServiceUnit({
 
     return lines.join("\n") + "\n";
 }
-
