@@ -1,0 +1,24 @@
+[Unit]
+Description=keshavsoft.com Node Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/KeshavSoft/keshavsoft.com
+
+Environment=NODE_ENV=production
+Environment=PORT=9328
+EnvironmentFile=/root/KeshavSoft/keshavsoft.com/.env
+
+ExecStart=/root/.nvm/versions/node/v24.13.0/bin/node app.js
+
+Restart=on-failure
+RestartSec=5
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+

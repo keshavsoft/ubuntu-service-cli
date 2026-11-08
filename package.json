@@ -1,0 +1,42 @@
+{
+  "name": "ubuntu-service-cli",
+  "version": "1.0.0",
+  "description": "Inspect, check, and manage Ubuntu systemd services matching KeshavSoft VPS domain conventions.",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "ubuntu-service-cli": "bin/index.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "start": "node bin/index.js",
+    "cli": "node bin/index.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "ubuntu",
+    "systemd",
+    "service",
+    "cli",
+    "keshavsoft",
+    "vps",
+    "hosting"
+  ],
+  "author": "KeshavSoft",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keshavsoft/ubuntu-service-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/keshavsoft/ubuntu-service-cli/issues"
+  },
+  "homepage": "https://keshavsoft.github.io/ubuntu-service-cli/",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

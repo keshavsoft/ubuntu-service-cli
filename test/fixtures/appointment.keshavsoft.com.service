@@ -1,0 +1,24 @@
+[Unit]
+Description=appointment.keshavsoft.com Node Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/KeshavSoft/appointment-notifier
+
+Environment=NODE_ENV=production
+Environment=PORT=3000
+EnvironmentFile=/root/KeshavSoft/appointment-notifier/.env
+
+ExecStart=/root/.nvm/versions/node/v24.13.0/bin/node app.js
+
+Restart=on-failure
+RestartSec=5
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+
