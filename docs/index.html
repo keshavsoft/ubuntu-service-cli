@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ubuntu-service-cli — The Human Lens for Ubuntu Systemd Services</title>
+  <meta name="description" content="Inspect, check, and manage Ubuntu systemd services matching KeshavSoft VPS domain conventions. The backend engine companion to caddy-cli.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐧</text></svg>">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.02); }
+    }
+    .pulse-badge { animation: pulse-subtle 3s infinite ease-in-out; }
+  </style>
+</head>
+
+<body class="bg-zinc-950 text-zinc-100 antialiased min-h-screen flex flex-col font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
+
+  <!-- Navbar -->
+  <nav class="border-b border-zinc-800 bg-zinc-900/90 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+      
+      <!-- Brand -->
+      <a href="#" class="flex items-center gap-2.5 shrink-0 text-decoration-none">
+        <span class="w-7 h-7 rounded-lg bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-zinc-950 font-black text-sm">🐧</span>
+        <span class="font-bold text-sm tracking-wider uppercase text-zinc-200">ubuntu-service-cli</span>
+        <span class="text-[10px] font-semibold text-cyan-400 bg-cyan-950/80 border border-cyan-800/80 px-2 py-0.5 rounded-full">v1.1.1</span>
+      </a>
+
+      <!-- Nav Links -->
+      <div class="flex items-center gap-2 text-xs font-mono">
+        <a href="#the-story" class="text-zinc-400 hover:text-zinc-200 px-2.5 py-1 rounded hover:bg-zinc-800/80 transition hidden sm:inline-block">The Story</a>
+        <a href="#architecture" class="text-zinc-400 hover:text-zinc-200 px-2.5 py-1 rounded hover:bg-zinc-800/80 transition hidden sm:inline-block">Architecture</a>
+        <a href="#simulator" class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2.5 py-1 rounded hover:bg-cyan-500/30 transition flex items-center gap-1">
+          <i class="bi bi-play-fill"></i>
+          <span>Live Simulator</span>
+        </a>
+        <a href="https://keshavsoft.github.io/caddy-hosting/" target="_blank" rel="noopener noreferrer"
+          class="text-zinc-400 hover:text-cyan-400 px-2 py-1 rounded hover:bg-zinc-800/80 transition hidden md:flex items-center gap-1" title="KeshavSoft Caddy Suite">
+          <span>Hosting Hub</span>
+          <i class="bi bi-box-arrow-up-right text-[10px]"></i>
+        </a>
+        <a href="https://www.npmjs.com/package/ubuntu-service-cli" target="_blank" rel="noopener noreferrer"
+          class="text-zinc-400 hover:text-red-400 p-1.5 transition ml-1" title="View on npm">
+          <i class="bi bi-box-seam text-base"></i>
+        </a>
+        <a href="https://github.com/keshavsoft/ubuntu-service-cli" target="_blank" rel="noopener noreferrer"
+          class="text-zinc-400 hover:text-zinc-100 p-1.5 transition" title="View Source on GitHub">
+          <i class="bi bi-github text-base"></i>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <main class="flex-1 max-w-5xl mx-auto px-4 sm:px-6 py-12 flex flex-col items-center text-center">
+
+    <!-- Status Badge -->
+    <div class="inline-flex items-center gap-2 bg-zinc-900 border border-cyan-800/60 text-cyan-400 px-3.5 py-1 rounded-full text-xs font-medium mb-6 shadow-sm pulse-badge">
+      <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span>Production VPS Companion: <code class="font-mono text-zinc-200">npx ubuntu-service-cli</code></span>
+    </div>
+
+    <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white max-w-3xl leading-tight mb-4">
+      The Human Lens for <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Ubuntu Systemd</span>
+    </h1>
+
+    <p class="text-base sm:text-lg text-zinc-400 max-w-2xl mb-8 leading-relaxed">
+      Caddy manages your inbound reverse proxy routes. <strong class="text-zinc-200">Who manages your background Node.js engines?</strong> Native Ubuntu <code class="text-cyan-300">systemd</code> services. Zero dependencies. Instant subdomain verification.
+    </p>
+
+    <!-- Quick Run Terminal Pill -->
+    <div class="w-full max-w-xl bg-zinc-900 border border-zinc-800 rounded-xl p-3 mb-8 flex items-center justify-between text-left font-mono text-xs text-zinc-300 shadow-xl">
+      <div class="flex items-center gap-2 overflow-x-auto">
+        <span class="text-cyan-400">$</span>
+        <span>npx ubuntu-service-cli</span>
+        <span class="text-zinc-500"># auto-inspects /etc/systemd/system</span>
+      </div>
+      <button onclick="copySnippet('npx ubuntu-service-cli', this)" class="hover:text-white text-zinc-400 transition ml-3 px-2 py-1 bg-zinc-800 rounded hover:bg-zinc-700 flex items-center gap-1" title="Copy command">
+        <i class="bi bi-clipboard"></i>
+        <span>Copy</span>
+      </button>
+    </div>
+
+    <!-- Quick Action Buttons -->
+    <div class="flex flex-wrap items-center justify-center gap-3 mb-14 text-xs font-mono">
+      <a href="#simulator" class="bg-cyan-600 hover:bg-cyan-500 text-zinc-950 font-bold px-4 py-2 rounded-lg transition shadow-lg shadow-cyan-600/20">
+        ⚡ Test Live Simulator
+      </a>
+      <a href="#the-story" class="bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 px-4 py-2 rounded-lg transition">
+        📖 Read Full Story
+      </a>
+      <a href="https://github.com/keshavsoft/caddy-cli" target="_blank" class="bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 px-4 py-2 rounded-lg transition flex items-center gap-1">
+        <span>Front-End Partner: caddy-cli</span>
+        <i class="bi bi-box-arrow-up-right text-[10px] text-zinc-500"></i>
+      </a>
+    </div>
+
+    <!-- The Story Section -->
+    <section id="the-story" class="w-full text-left bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 sm:p-8 mb-12 shadow-md">
+      <div class="flex items-center gap-2 text-cyan-400 font-semibold text-xs tracking-wider uppercase mb-3">
+        <i class="bi bi-book-half"></i>
+        <span>The Background Story</span>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-4">The Missing Half of Cloud Reverse Proxying</h2>
+      
+      <div class="space-y-4 text-sm text-zinc-300 leading-relaxed">
+        <p>
+          On your Ubuntu VPS (<code class="text-cyan-300">103.174.102.116</code>), hosting multiple applications behind Caddy is effortless. We built <a href="https://github.com/keshavsoft/caddy-cli" class="text-cyan-400 hover:underline"><code>caddy-cli</code></a> to inspect routes and programmatically manipulate <code>/etc/caddy/caddy.json</code> with zero downtime.
+        </p>
+        <p>
+          <strong>But Caddy is only the front door.</strong> Caddy receives HTTPS traffic on ports <code>80</code>/<code>443</code> and dials an internal upstream like <code>localhost:3000</code>. If no application is running on port 3000, Caddy will return a <strong class="text-red-400">502 Bad Gateway</strong>.
+        </p>
+        <p>
+          Who ensures your Node.js application boots up when the server restarts? Who restarts it in 5 seconds if an uncaught exception crashes it? 
+          <strong>Native Ubuntu Systemd</strong> (<code class="text-cyan-300">/etc/systemd/system/</code>).
+        </p>
+
+        <!-- 1-to-1 Mapping Callout -->
+        <div class="bg-zinc-950/80 border-l-4 border-cyan-400 p-4 rounded-r-lg my-4">
+          <div class="font-bold text-zinc-100 mb-1 flex items-center gap-1.5">
+            <i class="bi bi-check-circle-fill text-cyan-400"></i>
+            <span>The KeshavSoft 1-to-1 Mapping Convention</span>
+          </div>
+          <p class="text-xs text-zinc-400">
+            To prevent confusing multi-app process managers, every subdomain on the VPS maps 1-to-1 to a dedicated systemd service unit:
+            <br>
+            <code class="text-emerald-300">appointment.keshavsoft.com</code> &rarr; 
+            <code class="text-cyan-300">/etc/systemd/system/appointment.keshavsoft.com.service</code> &rarr; 
+            <code class="text-amber-300">/root/KeshavSoft/appointment-notifier (Port 3000)</code>
+          </p>
+        </div>
+
+        <p>
+          <strong>The Problem:</strong> When you manage 6 to 10+ subdomains, returning months later creates cognitive load: <em>Which services exist? Which internal ports are taken? If I have a list of subdomains, which ones are missing systemd units?</em>
+        </p>
+        <p>
+          <strong>The Solution:</strong> <code class="text-cyan-300">ubuntu-service-cli</code> gives you instant tabular inspection, array-based subdomain checking, port discovery, and unit generation in under 1 second.
+        </p>
+      </div>
+    </section>
+
+    <!-- Architecture Visualizer -->
+    <section id="architecture" class="w-full text-left bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 sm:p-8 mb-12 shadow-md">
+      <div class="flex items-center gap-2 text-cyan-400 font-semibold text-xs tracking-wider uppercase mb-3">
+        <i class="bi bi-diagram-3-fill"></i>
+        <span>VPS End-to-End Architecture</span>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-6">How the Two Halves Fit Together</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Half 1: Front Door -->
+        <div class="bg-zinc-950/90 border border-zinc-800 rounded-xl p-5">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-400">1. Front-Door Gateway</span>
+            <span class="text-[10px] bg-amber-950 text-amber-400 border border-amber-800/80 px-2 py-0.5 rounded">caddy-cli</span>
+          </div>
+          <h3 class="text-base font-bold text-white mb-2">Caddy Reverse Proxy</h3>
+          <ul class="text-xs text-zinc-400 space-y-2 font-mono">
+            <li>• Listens on <code class="text-zinc-200">:80 / :443</code></li>
+            <li>• Automatic TLS &amp; HTTPS certificates</li>
+            <li>• Dial target: <code class="text-cyan-300">localhost:3000</code></li>
+            <li>• Config: <code class="text-zinc-200">/etc/caddy/caddy.json</code></li>
+            <li>• Tool: <code class="text-amber-400">npx caddy-cli add proxy ...</code></li>
+          </ul>
+        </div>
+
+        <!-- Half 2: Backend Engine -->
+        <div class="bg-zinc-950/90 border border-zinc-800 rounded-xl p-5">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-cyan-400">2. Backend Engine</span>
+            <span class="text-[10px] bg-cyan-950 text-cyan-400 border border-cyan-800/80 px-2 py-0.5 rounded">ubuntu-service-cli</span>
+          </div>
+          <h3 class="text-base font-bold text-white mb-2">Native Ubuntu Systemd</h3>
+          <ul class="text-xs text-zinc-400 space-y-2 font-mono">
+            <li>• Listens on <code class="text-cyan-300">localhost:3000</code></li>
+            <li>• Auto-boots on VPS reboot (<code class="text-zinc-200">systemctl enable</code>)</li>
+            <li>• Revives in 5s on crash (<code class="text-emerald-300">Restart=on-failure</code>)</li>
+            <li>• Units: <code class="text-zinc-200">/etc/systemd/system/*.service</code></li>
+            <li>• Tool: <code class="text-cyan-400">npx ubuntu-service-cli check ...</code></li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Interactive Live Simulator -->
+    <section id="simulator" class="w-full text-left bg-zinc-900 border border-cyan-800/60 rounded-2xl p-6 sm:p-8 mb-12 shadow-2xl shadow-cyan-950/40">
+      <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+        <div>
+          <div class="flex items-center gap-2 text-cyan-400 font-semibold text-xs tracking-wider uppercase mb-1">
+            <i class="bi bi-terminal-fill"></i>
+            <span>Interactive Live Simulator</span>
+          </div>
+          <h2 class="text-2xl font-bold text-white">Experience `ubuntu-service-cli` in Browser</h2>
+        </div>
+        <span class="text-xs text-zinc-400 bg-zinc-800 px-2.5 py-1 rounded">Try clicking the command buttons:</span>
+      </div>
+
+      <!-- Simulator Buttons -->
+      <div class="flex flex-wrap gap-2 mb-4 font-mono text-xs">
+        <button onclick="runSim('list')" id="btn-list" class="sim-btn bg-cyan-600 text-zinc-950 font-bold px-3 py-1.5 rounded hover:bg-cyan-500 transition">
+          1. npx ubuntu-service-cli (List)
+        </button>
+        <button onclick="runSim('check')" id="btn-check" class="sim-btn bg-zinc-800 text-zinc-300 px-3 py-1.5 rounded hover:bg-zinc-700 transition">
+          2. check <subdomains...>
+        </button>
+        <button onclick="runSim('ports')" id="btn-ports" class="sim-btn bg-zinc-800 text-zinc-300 px-3 py-1.5 rounded hover:bg-zinc-700 transition">
+          3. -p (Port Mappings)
+        </button>
+        <button onclick="runSim('inspect')" id="btn-inspect" class="sim-btn bg-zinc-800 text-zinc-300 px-3 py-1.5 rounded hover:bg-zinc-700 transition">
+          4. -d appointment... (Inspect)
+        </button>
+        <button onclick="runSim('generate')" id="btn-generate" class="sim-btn bg-zinc-800 text-zinc-300 px-3 py-1.5 rounded hover:bg-zinc-700 transition">
+          5. generate (Unit File)
+        </button>
+      </div>
+
+      <!-- Terminal Output Box -->
+      <div class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden font-mono text-xs shadow-inner">
+        <div class="bg-zinc-900/80 px-4 py-2 border-b border-zinc-800 flex items-center justify-between text-zinc-500">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-yellow-500 inline-block"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-green-500 inline-block"></span>
+            <span id="simCommandTitle" class="ml-2 text-zinc-300">root@server6358:/etc/systemd/system# npx ubuntu-service-cli</span>
+          </div>
+          <button onclick="copyCurrentOutput()" class="text-zinc-400 hover:text-white flex items-center gap-1 transition">
+            <i class="bi bi-clipboard"></i>
+            <span>Copy Output</span>
+          </button>
+        </div>
+        <pre id="simOutput" class="p-4 overflow-x-auto text-zinc-200 leading-relaxed max-h-[380px]"></pre>
+      </div>
+    </section>
+
+    <!-- Why Systemd Beats PM2 Comparison Table -->
+    <section class="w-full text-left bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 sm:p-8 mb-12 shadow-md">
+      <div class="flex items-center gap-2 text-cyan-400 font-semibold text-xs tracking-wider uppercase mb-3">
+        <i class="bi bi-trophy-fill"></i>
+        <span>Architectural Evaluation</span>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-4">Why Native Systemd Beats PM2 &amp; Docker</h2>
+      <p class="text-sm text-zinc-400 mb-6">
+        Many developers default to PM2 or Docker out of habit. Here is why staying native with Ubuntu Systemd is the superior choice for high-reliability VPS hosting:
+      </p>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs font-mono border-collapse">
+          <thead>
+            <tr class="border-b border-zinc-800 text-zinc-400">
+              <th class="py-3 px-4">Feature</th>
+              <th class="py-3 px-4 text-cyan-300 bg-cyan-950/20">Native Systemd (ubuntu-service-cli)</th>
+              <th class="py-3 px-4">PM2 Daemon</th>
+              <th class="py-3 px-4">Docker Containers</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-800/60 text-zinc-300">
+            <tr>
+              <td class="py-3 px-4 font-semibold text-white">RAM Overhead</td>
+              <td class="py-3 px-4 text-emerald-400 font-bold bg-cyan-950/20">0 MB (Kernel supervisor)</td>
+              <td class="py-3 px-4 text-zinc-400">~50 - 80 MB daemon</td>
+              <td class="py-3 px-4 text-zinc-400">~150 - 300 MB runtime</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-white">Crash Recovery</td>
+              <td class="py-3 px-4 text-emerald-400 font-bold bg-cyan-950/20">Restart=on-failure (5s revive)</td>
+              <td class="py-3 px-4">Auto-restart</td>
+              <td class="py-3 px-4">Restart policy</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-white">Reboot Persistence</td>
+              <td class="py-3 px-4 text-emerald-400 font-bold bg-cyan-950/20">systemctl enable (Native Linux)</td>
+              <td class="py-3 px-4">Requires pm2 startup + save</td>
+              <td class="py-3 px-4">Docker daemon startup</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-white">Log Management</td>
+              <td class="py-3 px-4 text-emerald-400 font-bold bg-cyan-950/20">journalctl -u &lt;domain&gt; -f</td>
+              <td class="py-3 px-4">Rogue log files risk disk full</td>
+              <td class="py-3 px-4">Docker logs driver</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-white">3rd Party Dependencies</td>
+              <td class="py-3 px-4 text-emerald-400 font-bold bg-cyan-950/20">Zero (0 npm packages)</td>
+              <td class="py-3 px-4">30+ npm packages</td>
+              <td class="py-3 px-4">Docker engine &amp; binaries</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Programmatic API Section -->
+    <section class="w-full text-left bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 sm:p-8 mb-12 shadow-md">
+      <div class="flex items-center gap-2 text-cyan-400 font-semibold text-xs tracking-wider uppercase mb-3">
+        <i class="bi bi-code-slash"></i>
+        <span>Programmatic JavaScript API</span>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-4">Embed Directly in Node.js Scripts</h2>
+      <p class="text-sm text-zinc-400 mb-6">
+        Import <code class="text-cyan-300">ubuntu-service-cli</code> in your deployment pipelines or custom healthcheck scripts:
+      </p>
+
+      <div class="bg-zinc-950 border border-zinc-800 rounded-xl p-4 font-mono text-xs overflow-x-auto text-zinc-300">
+        <pre><code><span class="text-cyan-400">import</span> { checkServices, listServices, findServiceByDomain } <span class="text-cyan-400">from</span> <span class="text-emerald-300">"ubuntu-service-cli"</span>;
+
+<span class="text-zinc-500">// 1. Check an array of domain strings:</span>
+<span class="text-cyan-400">const</span> check = checkServices([
+    <span class="text-emerald-300">"appointment.keshavsoft.com"</span>,
+    <span class="text-emerald-300">"lab14.keshavsoft.com"</span>,
+    <span class="text-emerald-300">"newapp.keshavsoft.com"</span>
+]);
+
+console.log(check.presentCount); <span class="text-zinc-500">// 2</span>
+console.log(check.missingCount); <span class="text-zinc-500">// 1</span>
+console.log(check.missing[0].domain); <span class="text-zinc-500">// "newapp.keshavsoft.com"</span>
+
+<span class="text-zinc-500">// 2. Inspect a specific service:</span>
+<span class="text-cyan-400">const</span> svc = findServiceByDomain(<span class="text-emerald-300">"appointment.keshavsoft.com"</span>);
+console.log(svc.port);             <span class="text-zinc-500">// "3000"</span>
+console.log(svc.workingDirectory); <span class="text-zinc-500">// "/root/KeshavSoft/appointment-notifier"</span>
+console.log(svc.status);           <span class="text-zinc-500">// "active"</span></code></pre>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-zinc-800 bg-zinc-900/50 py-8 text-center text-xs text-zinc-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <strong class="text-zinc-300">ubuntu-service-cli</strong> • Part of the KeshavSoft VPS Management Suite
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="https://github.com/keshavsoft/caddy-cli" class="hover:text-zinc-300 transition">caddy-cli</a>
+        <a href="https://github.com/keshavsoft/caddy-template" class="hover:text-zinc-300 transition">caddy-template</a>
+        <a href="https://keshavsoft.github.io/caddy-hosting/" class="hover:text-zinc-300 transition">caddy-hosting</a>
+        <a href="https://github.com/keshavsoft/ubuntu-service-cli" class="hover:text-zinc-300 transition">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Simulator Script -->
+  <script>
+    const simData = {
+      list: {
+        title: "root@server6358:/etc/systemd/system# npx ubuntu-service-cli",
+        output: `Ubuntu Systemd Services (6 services in /etc/systemd/system):
+
+┌─────────┬──────────────────────────────┬────────┬──────────────────────────────────────┬──────────┬─────────────────────────────────────────┐
+│ (index) │ Domain                       │ Port   │ Service                              │ Status   │ Working Directory                       │
+├─────────┼──────────────────────────────┼────────┼──────────────────────────────────────┼──────────┼─────────────────────────────────────────┤
+│ 0       │ 'appointment.keshavsoft.com' │ '3000' │ 'appointment.keshavsoft.com.service' │ 'active' │ '/root/KeshavSoft/appointment-notifier' │
+│ 1       │ 'keshavsoft.com'             │ '9328' │ 'keshavsoft.com.service'             │ 'active' │ '/root/KeshavSoft/keshavsoft.com'       │
+│ 2       │ 'lab14.keshavsoft.com'       │ '9012' │ 'lab14.keshavsoft.com.service'       │ 'active' │ '/root/KeshavSoft/lab14.keshavsoft.com' │
+│ 3       │ 'mani3.keshavsoft.com'       │ '3025' │ 'mani3.keshavsoft.com.service'       │ 'active' │ '/root/KeshavSoft/mani3.keshavsoft.com' │
+│ 4       │ 'quotation.keshavsoft.com'   │ '9011' │ 'quotation.keshavsoft.com.service'   │ 'active' │ '/root/KeshavSoft/quotation.keshavsoft' │
+│ 5       │ 'rk2.keshavsoft.com'         │ '9010' │ 'rk2.keshavsoft.com.service'         │ 'active' │ '/root/KeshavSoft/rk2.keshavsoft.com'   │
+└─────────┴──────────────────────────────┴────────┴──────────────────────────────────────┴──────────┴─────────────────────────────────────────┘
+
+Tip: Run 'npx ubuntu-service-cli check <domain1> <domain2>' to check subdomains.
+     Run 'npx ubuntu-service-cli -p' to see port assignments.`
+      },
+      check: {
+        title: "root@server6358:/etc/systemd/system# npx ubuntu-service-cli check appointment.keshavsoft.com lab14.keshavsoft.com newapp.keshavsoft.com",
+        output: `Ubuntu Systemd Service Checklist (Directory: /etc/systemd/system):
+
+┌─────────┬──────────────┬──────────────────────────────┬──────────────────────────────────────┬────────┬───────────────┬─────────────────────────────────────────┐
+│ (index) │ Check        │ Domain                       │ Service File                         │ Port   │ Status        │ Working Directory                       │
+├─────────┼──────────────┼──────────────────────────────┼──────────────────────────────────────┼────────┼───────────────┼─────────────────────────────────────────┤
+│ 0       │ '✅ Present' │ 'appointment.keshavsoft.com' │ 'appointment.keshavsoft.com.service' │ '3000' │ 'active'      │ '/root/KeshavSoft/appointment-notifier' │
+│ 1       │ '✅ Present' │ 'lab14.keshavsoft.com'       │ 'lab14.keshavsoft.com.service'       │ '9012' │ 'active'      │ '/root/KeshavSoft/lab14.keshavsoft.com' │
+│ 2       │ '❌ MISSING' │ 'newapp.keshavsoft.com'      │ 'newapp.keshavsoft.com.service'      │ '-'    │ 'not_created' │ '-'                                     │
+└─────────┴──────────────┴──────────────────────────────┴──────────────────────────────────────┴────────┴───────────────┴─────────────────────────────────────────┘
+
+Summary: 2 present, 1 missing out of 3 checked.
+Exit code: 2 (missing domains detected)`
+      },
+      ports: {
+        title: "root@server6358:/etc/systemd/system# npx ubuntu-service-cli -p",
+        output: `Ubuntu Systemd Port Mappings (6 services):
+
+┌─────────┬────────┬──────────────────────────────┬──────────────────────────────────────┬──────────┬─────────────────────────────────────────┐
+│ (index) │ Port   │ Domain                       │ Service                              │ Status   │ Working Directory                       │
+├─────────┼────────┼──────────────────────────────┼──────────────────────────────────────┼──────────┼─────────────────────────────────────────┤
+│ 0       │ '3000' │ 'appointment.keshavsoft.com' │ 'appointment.keshavsoft.com.service' │ 'active' │ '/root/KeshavSoft/appointment-notifier' │
+│ 1       │ '9328' │ 'keshavsoft.com'             │ 'keshavsoft.com.service'             │ 'active' │ '/root/KeshavSoft/keshavsoft.com'       │
+│ 2       │ '9012' │ 'lab14.keshavsoft.com'       │ 'lab14.keshavsoft.com.service'       │ 'active' │ '/root/KeshavSoft/lab14.keshavsoft.com' │
+│ 3       │ '3025' │ 'mani3.keshavsoft.com'       │ 'mani3.keshavsoft.com.service'       │ 'active' │ '/root/KeshavSoft/mani3.keshavsoft.com' │
+│ 4       │ '9011' │ 'quotation.keshavsoft.com'   │ 'quotation.keshavsoft.com.service'   │ 'active' │ '/root/KeshavSoft/quotation.keshavsoft' │
+│ 5       │ '9010' │ 'rk2.keshavsoft.com'         │ 'rk2.keshavsoft.com.service'         │ 'active' │ '/root/KeshavSoft/rk2.keshavsoft.com'   │
+└─────────┴────────┴──────────────────────────────┴──────────────────────────────────────┴──────────┴─────────────────────────────────────────┘`
+      },
+      inspect: {
+        title: "root@server6358:/etc/systemd/system# npx ubuntu-service-cli -d appointment.keshavsoft.com",
+        output: `======================================================
+ Systemd Service: appointment.keshavsoft.com.service
+ Path: /etc/systemd/system/appointment.keshavsoft.com.service
+ Status: active
+======================================================
+
+Raw Unit Sections:
+
+{
+  "Unit": {
+    "Description": "appointment.keshavsoft.com Node Service",
+    "After": "network.target"
+  },
+  "Service": {
+    "Type": "simple",
+    "User": "root",
+    "WorkingDirectory": "/root/KeshavSoft/appointment-notifier",
+    "Environment": [
+      "NODE_ENV=production",
+      "PORT=3000"
+    ],
+    "EnvironmentFile": "/root/KeshavSoft/appointment-notifier/.env",
+    "ExecStart": "/root/.nvm/versions/node/v24.13.0/bin/node app.js",
+    "Restart": "on-failure",
+    "RestartSec": "5",
+    "StandardOutput": "journal",
+    "StandardError": "journal"
+  },
+  "Install": {
+    "WantedBy": "multi-user.target"
+  }
+}`
+      },
+      generate: {
+        title: "root@server6358:/etc/systemd/system# npx ubuntu-service-cli generate appointment.keshavsoft.com 3000 /root/KeshavSoft/appointment-notifier",
+        output: `[Unit]
+Description=appointment.keshavsoft.com Node Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/KeshavSoft/appointment-notifier
+
+Environment=NODE_ENV=production
+Environment=PORT=3000
+EnvironmentFile=/root/KeshavSoft/appointment-notifier/.env
+
+ExecStart=/root/.nvm/versions/node/v24.13.0/bin/node app.js
+
+Restart=on-failure
+RestartSec=5
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target`
+      }
+    };
+
+    function runSim(cmdKey) {
+      document.querySelectorAll('.sim-btn').forEach(b => {
+        b.classList.remove('bg-cyan-600', 'text-zinc-950', 'font-bold');
+        b.classList.add('bg-zinc-800', 'text-zinc-300');
+      });
+      const activeBtn = document.getElementById('btn-' + cmdKey);
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-zinc-800', 'text-zinc-300');
+        activeBtn.classList.add('bg-cyan-600', 'text-zinc-950', 'font-bold');
+      }
+
+      const item = simData[cmdKey];
+      document.getElementById('simCommandTitle').innerText = item.title;
+      document.getElementById('simOutput').innerText = item.output;
+    }
+
+    function copySnippet(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="bi bi-check"></i> Copied!';
+        setTimeout(() => btn.innerHTML = orig, 1800);
+      });
+    }
+
+    function copyCurrentOutput() {
+      const text = document.getElementById('simOutput').innerText;
+      navigator.clipboard.writeText(text).then(() => alert("Terminal output copied to clipboard!"));
+    }
+
+    // Default view
+    runSim('list');
+  </script>
+
+</body>
+</html>
