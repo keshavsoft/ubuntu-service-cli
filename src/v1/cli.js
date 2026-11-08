@@ -226,3 +226,4 @@ export function runCli(argv = process.argv.slice(2)) {
 }
 
 export default runCli;
+
